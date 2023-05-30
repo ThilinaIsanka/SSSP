@@ -1,0 +1,75 @@
+#include <iostream>
+#include <climits>
+
+#define V 6 
+
+int minDistance(int distances[], bool visit[]) {
+    int min = INT_MAX, minIndex;
+
+    for (int v = 0; v < V; v++) {
+        if (!visit[v] && distances[v] <= min) {
+            min = distances[v];
+            minIndex = v;
+        }
+    }
+
+    return minIndex;
+}
+
+void dijkstra(int graph[V][V], int source) {
+    int distances[V]; 
+    bool visit[V]; 
+
+    for (int i = 0; i < V; i++) {
+        distances[i] = INT_MAX;
+        visit[i] = false;
+    }
+
+    distances[source] = 0;
+
+    for (int count = 0; count < V - 1; count++) {
+        int u = minDistance(distances, visit);
+        visit[u] = true;
+
+        for (int v = 0; v < V; v++) {
+            if (!visit[v] && graph[u][v] && distances[u] != INT_MAX &&
+                distances[u] + graph[u][v] < distances[v]) {
+                distances[v] = distances[u] + graph[u][v];
+            }
+        }
+    }
+
+    std::cout << "Source City " << source << ":\n";
+    for (int i = 0; i < V; i++) {
+        std::cout << "City " << i << ": " << distances[i] << "\n";
+    }
+
+    int sum_of_dist = 0;
+    int cities = V - 1; 
+    for (int i = 0; i < V; i++) {
+        if (i != source) {
+            sum_of_dist += distances[i];
+        }
+    }
+    double averageDistance = static_cast<double>(sum_of_dist) / cities;
+    std::cout << "Average Distance " << source << ": " << averageDistance << "\n";
+    std::cout << "\n";
+}
+
+int main() {
+    int graph[V][V] = {
+        {0, 10, 0, 0, 15, 5},
+        {10, 0, 10, 30, 0, 0},
+        {0, 10, 0, 12, 5, 0},
+        {0, 30, 12, 0, 0, 20},
+        {15, 0, 5, 0, 0, 0},
+        {5, 0, 0, 20, 0, 0}
+    };
+
+    for (int source = 0; source < V; source++) {
+        dijkstra(graph, source);
+    }
+
+    return 0;
+}
+
